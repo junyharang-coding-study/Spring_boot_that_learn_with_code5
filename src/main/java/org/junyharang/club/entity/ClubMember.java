@@ -1,9 +1,6 @@
 package org.junyharang.club.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.junyharang.club.entity.base.BaseTimeEntity;
 import org.junyharang.club.entity.base.ClubMemberRole;
 
@@ -11,7 +8,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter @NoArgsConstructor @AllArgsConstructor @Builder @ToString
 @Entity public class ClubMember extends BaseTimeEntity {
 
     @Id private String email;

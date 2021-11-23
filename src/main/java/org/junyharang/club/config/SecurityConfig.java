@@ -17,15 +17,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         return new BCryptPasswordEncoder();
     } // passwordEncoder() 끝
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // 이용자 계정은 user1
-        auth.inMemoryAuthentication().withUser("user1")
-
-        // 11111 패스워드 암호화 결과
-                .password("$2a$10$sq4lPjbhbICoqgPZDT/aQOQcmx.v2qGpcVVYgxN6kyovtuvHMwzQm")
-                .roles("USER");
-    } // configure(auth) 끝
+    /*
+     configure(auth)는 임시로 만든 Method로 미사용 처리
+     */
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        // 이용자 계정은 user1
+//        auth.inMemoryAuthentication().withUser("user1")
+//
+//        // 11111 패스워드 암호화 결과
+//                .password("$2a$10$sq4lPjbhbICoqgPZDT/aQOQcmx.v2qGpcVVYgxN6kyovtuvHMwzQm")
+//                .roles("USER");
+//    } // configure(auth) 끝
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
