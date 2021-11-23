@@ -38,3 +38,4 @@ out/
 
 ### Spring ###
 application.properties
+application-oauth.properties
