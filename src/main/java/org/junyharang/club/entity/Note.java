@@ -1,11 +1,12 @@
 package org.junyharang.club.entity;
 
 import lombok.*;
+import org.junyharang.club.entity.base.BaseTimeEntity;
 
 import javax.persistence.*;
 
 @Builder @AllArgsConstructor @NoArgsConstructor @Getter @ToString
-@Entity public class Note {
+@Entity public class Note extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long num;

@@ -1,14 +1,22 @@
 package org.junyharang.club.config;
 
 import lombok.extern.log4j.Log4j2;
+import org.junyharang.club.security.filter.ApiCheckFilter;
+import org.junyharang.club.security.filter.ApiLoginFilter;
+import org.junyharang.club.security.handler.ApiLoginFailHandler;
 import org.junyharang.club.security.handler.ClubLoginSuccessHandler;
+import org.junyharang.club.security.util.JWTUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import javax.servlet.Filter;
 
 @Log4j2 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Configuration public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -17,6 +25,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
     @Bean PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     } // passwordEncoder() 끝
+
+    @Bean public JWTUtil jwtUtil() { return new JWTUtil(); }
+
+    @Bean public ApiCheckFilter apiCheckFilter() { return new ApiCheckFilter("/notes/**/*", jwtUtil()); } // apiCheckFilter() 끝
 
     /*
      configure(auth)는 임시로 만든 Method로 미사용 처리
@@ -58,7 +70,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         //자동 로그인 기능 추가(Remember me)
         // 7일 동안 추가 로그인 없이 자동 로그인인
        http.rememberMe().tokenValiditySeconds(60*60*24*7).userDetailsService(userDetailsService());
+
+       //usernamePasswordAuthenticationFilter 이전에 ApiChekFilter가 동작하도록 순서 설정
+        http.addFilterBefore(apiCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(apiLoginFilter(), UsernamePasswordAuthenticationFilter.class);
     } //configure(http) 끝
+
+    @Bean public ApiLoginFilter apiLoginFilter() throws Exception {
+
+        ApiLoginFilter apiLoginFilter = new ApiLoginFilter("/api/login", jwtUtil());
+        apiLoginFilter.setAuthenticationManager(authenticationManager());
+
+        apiLoginFilter.setAuthenticationFailureHandler(new ApiLoginFailHandler());
+
+        return apiLoginFilter;
+
+    } // apiLoginFilter() 끝
 
     @Bean public ClubLoginSuccessHandler successHandler() {
 
